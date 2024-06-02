@@ -1,6 +1,10 @@
 #!/usr/bin/env python3
 
 export = [
+  Version(0, 2, 1, changelog="""
+    Bug Fix:
+      - Incorrect Claude model IDs
+  """),
   Version(0, 2, 0, changelog="""
     Major Changes:
       - Implement Claude support

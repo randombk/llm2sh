@@ -111,8 +111,8 @@ class LlmDo(object):
       ('gpt-3.5-turbo-instruct', openai_available, openai_str, 'OPENAI', 'gpt-3.5-turbo-instruct'),
       ('gpt-4-turbo', openai_available, openai_str, 'OPENAI', 'gpt-4-turbo'),
       ('claude-3-opus', claude_available, claude_str, 'CLAUDE', 'claude-3-opus-20240229'),
-      ('claude-3-sonnet', claude_available, claude_str, 'CLAUDE', 'claude-3-opus-20240229'),
-      ('claude-3-haiku', claude_available, claude_str, 'CLAUDE', 'claude-3-opus-20240307'),
+      ('claude-3-sonnet', claude_available, claude_str, 'CLAUDE', 'claude-3-sonnet-20240229'),
+      ('claude-3-haiku', claude_available, claude_str, 'CLAUDE', 'claude-3-haiku-20240307'),
     ]
 
 
