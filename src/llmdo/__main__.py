@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 
-from .gptdo import GPTDo
+from .llmdo import LlmDo
 
 def cli():
-  GPTDo()
+  LlmDo()
 
 if __name__ == '__main__':
-  GPTDo()
+  LlmDo()

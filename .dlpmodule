@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 export = DLPModule(
-  name="gptdo",
+  name="llmdo",
   desc="[PUBLIC] Ask GPT to run a command",
   license=[
     "GPL-3.0",
@@ -16,7 +16,7 @@ export = DLPModule(
         then echo "Initializing venv..."
         python3.11 -m venv env
         source env/bin/activate
-        pip install .
+        pip install -e .[dev]
         deactivate
       fi
     ''',

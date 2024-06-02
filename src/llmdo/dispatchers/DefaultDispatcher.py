@@ -13,7 +13,7 @@ from ..config import Config
 
 class DefaultDispatcher:
   """
-  Default fallback dispatcher for gptdo, used when there isn't a more specific
+  Default fallback dispatcher for llmdo, used when there isn't a more specific
   dispatcher available. This dispatcher can be extended to customize the
   system prompt or to use a different API.
   """

@@ -10,18 +10,18 @@ from .config import Config
 from .util import eprint, ethrow
 from .dispatchers.DefaultDispatcher import DefaultDispatcher
 
-class GPTDo(object):
+class LlmDo(object):
   def __init__(self):
     parser = argparse.ArgumentParser(
       description='Ask GPT to run a command',
-      usage='gptdo [options] <request>',
+      usage='llmdo [options] <request>',
       add_help = True,
     )
 
     parser.add_argument('request', help = 'request for gpt', action='store', nargs='*')
-    # parser.add_argument('--setup', help = 'configure gptdo', action = 'store_true')
-    parser.add_argument('-c', '--config', help = 'specify config file, (Default: ~/.config/gptdo/gptdo.json)',
-                        action = 'store', default = '~/.config/gptdo/gptdo.json')
+    # parser.add_argument('--setup', help = 'configure llmdo', action = 'store_true')
+    parser.add_argument('-c', '--config', help = 'specify config file, (Default: ~/.config/llmdo/llmdo.json)',
+                        action = 'store', default = '~/.config/llmdo/llmdo.json')
     parser.add_argument('-l', '--list-models', help = 'list available models', action = 'store_true')
     parser.add_argument('-m', '--model', help = 'specify which model to use', action = 'store')
     parser.add_argument('-v', '--verbose', help = 'print verbose debug information', action = 'store_true')

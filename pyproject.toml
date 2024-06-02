@@ -1,5 +1,5 @@
 [project]
-name = "gptdo"
+name = "llmdo"
 description = "Ask GPT to run a command"
 dynamic = ["version"]
 license = {text = "GPL-3.0"}
@@ -11,8 +11,11 @@ dependencies = [
   "openai>=1.30.5"
 ]
 
+[project.optional-dependencies]
+dev = ["build", "twine"]
+
 [project.scripts]
-gptdo = "gptdo.__main__:cli"
+llmdo = "llmdo.__main__:cli"
 
 [tool.setuptools.dynamic]
 version = { file = ".latest-version.generated.txt" }
