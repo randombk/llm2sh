@@ -1,0 +1,55 @@
+{
+  "editor.fontSize": 14,
+  "editor.formatOnPaste": true,
+  "editor.formatOnSave": true,
+  "editor.formatOnType": true,
+  "editor.quickSuggestions": {
+    "comments": "on",
+    "strings": "on",
+    "other": "on"
+  },
+  "editor.quickSuggestionsDelay": 200,
+  "editor.rulers": [
+    80,
+    120
+  ],
+  "editor.tabSize": 2,
+  "editor.wordBasedSuggestions": false,
+  "editor.wordWrapColumn": 150,
+  "explorer.openEditors.visible": 5,
+  "files.autoSave": "off",
+  "files.insertFinalNewline": true,
+  "files.trimTrailingWhitespace": true,
+  "git.autofetch": false,
+  "git.ignoreLimitWarning": true,
+  "html.format.enable": false,
+  "htmlhint.options": {
+    "attr-name-style": false
+  },
+  "files.exclude": {
+    "**/.git": true,
+    "**/.svn": true,
+    "**/.hg": true,
+    "**/CVS": true,
+    "**/.DS_Store": true,
+    "**/.gitattributes": true,
+    "**/*.env": true,
+    "**/*.iml": true,
+    "**/*.scss.d.ts": true,
+    "**/*.shim.ts": true,
+    "**/*.zip": true,
+    "**/build": true,
+    "**/dist": true,
+    "**/node_modules": true,
+    "**/out": true,
+    "**/stats.json": true,
+    "**/dev": true,
+  },
+  "telemetry.enableTelemetry": false,
+  "search.exclude": {
+    "**/dist": true,
+    "**/out": true,
+    "**/env": true,
+  },
+  "python.defaultInterpreterPath": "./env/bin/python",
+}

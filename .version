@@ -1,0 +1,8 @@
+#!/usr/bin/env python3
+
+export = [
+  Version(0, 1, 0, changelog="""
+    Major Changes:
+      - Initial Commit
+  """),
+]

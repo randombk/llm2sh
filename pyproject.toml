@@ -1,0 +1,23 @@
+[project]
+name = "gptdo"
+description = "Ask GPT to run a command"
+dynamic = ["version"]
+license = {text = "GPL-3.0"}
+requires-python = ">=3.8"
+readme = "README.md"
+authors = [{name = "David Li", email = "david@david-li.com"}]
+keywords = ["llm", "gpt", "cli"]
+dependencies = [
+  "openai>=1.30.5"
+]
+
+[project.scripts]
+gptdo = "gptdo.__main__:cli"
+
+[tool.setuptools.dynamic]
+version = { file = ".latest-version.generated.txt" }
+
+[build-system]
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"
+

@@ -1,0 +1,40 @@
+#!/usr/bin/env python3
+
+export = DLPModule(
+  name="gptdo",
+  desc="[PUBLIC] Ask GPT to run a command",
+  license=[
+    "GPL-3.0",
+    "Copyright (C) 2024 DLP Networks",
+    "Copyright (C) 2024 David Jia Wei Li",
+  ],
+
+  setup_script=[
+    # Initial checkup: Create virtual env
+    '''
+      if [[ ! -d "env" ]]
+        then echo "Initializing venv..."
+        python3.11 -m venv env
+        source env/bin/activate
+        pip install .
+        deactivate
+      fi
+    ''',
+  ],
+
+  activate_script=[
+    # Initial checkup: Ensure docker exists
+    '''
+      if [[ ! -d "env" ]]
+        then echo "Virtual environment env not found."
+        echo "Run './dlp setup $DLP_MODULE'"
+        exit 1
+      fi
+    ''',
+
+    # Load environment
+    "source env/bin/activate",
+  ],
+
+  stop_script=[],
+)

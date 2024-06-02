@@ -1,0 +1,11 @@
+# Python
+env/
+__pycache__/
+*.pyc
+*.egg-info/
+build/
+
+# Generated environment files
+*.env
+*.secrets
+/local.properties
