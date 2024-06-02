@@ -8,7 +8,8 @@ readme = "README.md"
 authors = [{name = "David Li", email = "david@david-li.com"}]
 keywords = ["llm", "gpt", "cli"]
 dependencies = [
-  "openai>=1.30.5"
+  "openai>=1.30.5",
+  "anthropic",
 ]
 
 [project.optional-dependencies]

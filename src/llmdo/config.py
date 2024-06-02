@@ -5,7 +5,7 @@ from dataclasses import dataclass, asdict
 
 @dataclass
 class Config:
-  default_model: str = 'gpt-3.5-turbo'
+  default_model: str = 'gpt-4o'
 
   openai_api_key: str = ''
   claude_api_key: str = ''
@@ -13,7 +13,7 @@ class Config:
   local_uri: str = 'http://localhost:8000/v1'
   local_api_key: str = ''
 
-  temperature: float = 0.4
+  temperature: float = 0.2
 
   # Always run in yolo mode
   i_like_to_live_dangerously: bool = False
@@ -33,9 +33,29 @@ class Config:
       claude_api_key = d.get('claude_api_key', ''),
       local_uri = d.get('local_uri', 'http://localhost:8000/v1'),
       local_api_key = d.get('local_api_key', ''),
-      temperature = d.get('temperature', 0.4),
+      temperature = d.get('temperature', 0.2),
       i_like_to_live_dangerously = d.get('i_like_to_live_dangerously', False),
     )
+
+
+  @property
+  def effective_openai_key(self) -> str:
+    if len(self.openai_api_key) > 0:
+      return self.openai_api_key
+    elif len(os.environ.get('OPENAI_API_KEY', '')) > 0:
+      return os.environ['OPENAI_API_KEY']
+    else:
+      return ''
+
+
+  @property
+  def effective_claude_key(self) -> str:
+    if len(self.claude_api_key) > 0:
+      return self.claude_api_key
+    elif len(os.environ.get('ANTHROPIC_API_KEY', '')) > 0:
+      return os.environ['ANTHROPIC_API_KEY']
+    else:
+      return ''
 
 
   def save_config(self, config_file: str):

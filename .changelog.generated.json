@@ -1,6 +1,13 @@
 [
   {
     "major": 0,
+    "minor": 2,
+    "patch": 0,
+    "update": 0,
+    "changelog": "\n    Major Changes:\n      - Implement Claude support\n      - Further tweaks to the system prompt\n      - Lower default temperature to 0.2\n      - Add additional output cleaning to handle common mistakes with smaller models\n      - Include the current OS Distro in the system prompt so the LLM can output distro-specific commands\n  "
+  },
+  {
+    "major": 0,
     "minor": 1,
     "patch": 0,
     "update": 0,

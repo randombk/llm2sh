@@ -9,7 +9,7 @@ from openai import OpenAI
 from openai.types.chat.chat_completion_message import ChatCompletionMessage
 
 from ..config import Config
-
+from ..util import unquote_all
 
 class DefaultDispatcher:
   """
@@ -39,7 +39,7 @@ class DefaultDispatcher:
       base_url=None if self.uri == '' else self.uri,
       api_key='NA' if self.key == '' else self.key,
     )
-    response = client.chat.completions.create(
+    message = client.chat.completions.create(
         model=self.model,
         temperature=self.config.temperature,
         messages=[
@@ -48,7 +48,11 @@ class DefaultDispatcher:
         ],
     )
 
-    return self._clean_output(response.choices[0].message.content.split('\n'))
+    response = message.choices[0].message.content
+    if self.verbose:
+      print(f"[DEBUG]: Response:\n{response}")
+
+    return self._clean_output(response.split('\n'))
 
 
   def _max_context_length(self) -> int:
@@ -90,6 +94,21 @@ class DefaultDispatcher:
     """
     items = os.listdir()
     return items[:int(len(items) * summarize_factor)]
+
+
+  def _additional_context(self, summarize_factor: int) -> str:
+    """
+    Returns additional situational context to be included in the system prompt.
+    """
+
+    lines = []
+
+    # If lsb_release is available, include the OS version
+    if os.path.exists('/usr/bin/lsb_release'):
+      lines.append('The OS is:')
+      lines.append(os.popen('/usr/bin/lsb_release -d').read().strip())
+
+    return '\n'.join(lines)
 
 
   def _available_env(self, summarize_factor: int) -> List[str]:
@@ -148,7 +167,7 @@ class DefaultDispatcher:
     def get_prompt(factor: float) -> str:
       nl = '\n'
       return textwrap.dedent(f"""
-        You are an AI helping the user perform tasks in a POSIX-compliant shell. The user will give you a request,
+        You are an AI helping the user perform tasks in a Bash shell. The user will give you a request,
         and you will generate one or more shell commands to fulfill that request. You can use any shell constructs,
         including pipes, redirection, and loops. You can also use any commands available in the shell environment.
         The shell is configured with `set -e`, so generate appropriate error handling for commands that are allowed
@@ -160,10 +179,13 @@ class DefaultDispatcher:
 
         You can refer to the following environment variables: \n{nl.join([f"         - {i}" for i in self._available_env(factor)])}
 
-        YOU MUST RESPOND WITH ONLY VALID SHELL COMMANDS. DO NOT INCLUDE ANYTHING ELSE IN YOUR RESPONSE.
+        \n{self._additional_context(factor)}
+
         Make sure you output valid shell commands, paying special attention to quoting and escaping.
         Do not wrap the response in quotes or backticks. If you want to provide additional information,
         please include it in a shell comment (i.e. `#`) or use `echo`.
+
+        YOU MUST RESPOND WITH ONLY VALID SHELL COMMANDS. DO NOT INCLUDE ANYTHING ELSE IN YOUR RESPONSE.
       """)
 
     prompt = get_prompt(summarize_factor)
@@ -179,8 +201,29 @@ class DefaultDispatcher:
     """
     Cleans the output by removing any leading or trailing whitespace and other common mistakes.
     """
-    return [
-      i.strip()
-      for i in output
-      if i.strip() != '' and i.strip() != '```'
+
+    # Remove trailing and leading whitespace. This does remove whitespace in front of the command, which does have
+    # meaning within bash (skip writing history), but it's fine to remove it this context.
+    cleaned = [i.strip() for i in output]
+
+    cleaned = [
+      # Remove quotes around the commands
+      unquote_all(i, ['`', '"', "'"])
+
+      for i in cleaned
+
+      if not (
+        # Heuristic: Remove empty lines and code blocks
+        (i == '')
+        or (i == '```')
+        or (i == '```bash')
+        or (i == '```shell')
+        or (i == '```sh')
+
+        # Heuristic: Remove lines where the LLM is trying to be conversational
+        or (i.startswith('Sure'))  # i.e. "Sure! Here is..."
+        or (i.startswith('Here'))  # i.e. "Here is..."
+      )
     ]
+
+    return cleaned

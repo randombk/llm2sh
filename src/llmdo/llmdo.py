@@ -7,8 +7,9 @@ import subprocess
 from typing import List, Optional, Dict, Set, Tuple
 
 from .config import Config
-from .util import eprint, ethrow
+from .util import ethrow
 from .dispatchers.DefaultDispatcher import DefaultDispatcher
+from .dispatchers.AnthropicDispatcher import AnthropicDispatcher
 
 class LlmDo(object):
   def __init__(self):
@@ -82,53 +83,58 @@ class LlmDo(object):
     print('Available models:')
     print(f'Models can be configured via {self.args.config}\n')
 
-    max_just_name = max([len(module) for (module, _, _, _) in self.model_list])
+    max_just_name = max([len(module) for (module, _, _, _, _) in self.model_list])
     max_just_avail = len('NOT AVAILABLE')
 
-    for (model, avail, help, _) in self.model_list:
+    for (model, avail, help, _, model_id) in self.model_list:
       print(
         model.ljust(max_just_name + 2) +
         ('OK' if avail else 'NOT AVAILABLE').rjust(max_just_avail) +
         " | "
-        f"{help}"
+        f"({model_id}) {help}"
       )
 
 
   def load_models(self) -> List[Tuple[str, bool, str, str]]:
-    openai_available = len(self.config.openai_api_key) > 0
+    openai_available = len(self.config.effective_openai_key) > 0
     openai_str = "Ready" if openai_available else f"Requires OpenAI API key"
 
-    claude_available = len(self.config.claude_api_key) > 0
+    claude_available = len(self.config.effective_claude_key) > 0
     claude_str = "Ready" if claude_available else f"Requires Claude API key"
 
     local_available = len(self.config.local_uri) > 0
     local_str = f"Ready - {self.config.local_uri}" if local_available else f"Requires local LLM API URI"
 
     return [
-      ('local', local_available, local_str, 'LOCAL'),
-      ('gpt-4o', openai_available, openai_str, 'OPENAI'),
-      ('gpt-3.5-turbo-instruct', openai_available, openai_str, 'OPENAI'),
-      ('gpt-4-turbo', openai_available, openai_str, 'OPENAI'),
-      ('claude-3-opus', claude_available, claude_str, 'CLAUDE'),
-      ('claude-3-sonnet', claude_available, claude_str, 'CLAUDE'),
-      ('claude-3-haiku', claude_available, claude_str, 'CLAUDE'),
+      ('local', local_available, local_str, 'LOCAL', 'local'),
+      ('gpt-4o', openai_available, openai_str, 'OPENAI', 'gpt-4o'),
+      ('gpt-3.5-turbo-instruct', openai_available, openai_str, 'OPENAI', 'gpt-3.5-turbo-instruct'),
+      ('gpt-4-turbo', openai_available, openai_str, 'OPENAI', 'gpt-4-turbo'),
+      ('claude-3-opus', claude_available, claude_str, 'CLAUDE', 'claude-3-opus-20240229'),
+      ('claude-3-sonnet', claude_available, claude_str, 'CLAUDE', 'claude-3-opus-20240229'),
+      ('claude-3-haiku', claude_available, claude_str, 'CLAUDE', 'claude-3-opus-20240307'),
     ]
 
 
   def dispatch_request(self, request: str) -> List[str]:
-    (model_id, _, _, model_type) = self.models[self.selected_model]
+    (_, _, _, model_type, model_id) = self.models[self.selected_model]
 
     # TOTO: Implement dispatcher selection based on the chosen model
     if model_type == 'OPENAI':
       dispatcher = DefaultDispatcher(
         uri = '',  # Defaults to None, which uses the OpenAI API
-        key = self.config.openai_api_key,
+        key = self.config.effective_openai_key,
         model = model_id,
         config = self.config,
         verbose=self.args.verbose,
       )
     elif model_type == 'CLAUDE':
-      ethrow('Claude API not implemented yet')
+      dispatcher = AnthropicDispatcher(
+        key = self.config.effective_claude_key,
+        model = model_id,
+        config = self.config,
+        verbose=self.args.verbose,
+      )
     elif model_type == 'LOCAL':
       dispatcher = DefaultDispatcher(
         uri = self.config.local_uri,
@@ -182,7 +188,7 @@ class LlmDo(object):
         output = process.stdout.readline()
         if not output:
             break
-        print(output.strip())
+        print(output.rstrip())
 
     # Close the stdin and wait for the process to finish
     process.wait()
