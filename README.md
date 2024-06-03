@@ -105,21 +105,21 @@ llm2sh --force "delete all temporary files"
 
 `llm2sh` currently supports the following LLMs for command generation:
 
-| Model Name | Provider | Accuracy | Cost | Requirements | Notes |
-|----------|----------|----------|----------|----------|----------|
-| `local` | N/A | ¯\_(ツ)_/¯ | **FREE** | Local LLM Api Endpoint (i.e. llama.cpp) | |
-| `gpt-4o` | OpenAI | 🧠🧠🧠 | 💲💲💲 | OpenAI API Key | Default model |
-| `gpt-4-turbo` | OpenAI | 🧠🧠🧠 | 💲💲💲💲 | OpenAI API Key | |
-| `gpt-3.5-turbo-instruct` | OpenAI | 🧠🧠 | 💲💲 | OpenAI API Key | |
-| `claude-3-opus` | Claude | 🧠🧠🧠🧠 | 💲💲💲💲 | Claude API Key | Fairly slow (>10s) |
-| `claude-3-sonnet` | Claude | 🧠🧠🧠 | 💲💲💲 | Claude API Key | Somewhat slow (~5s) |
-| `claude-3-haiku` | Claude | 🧠 | 💲💲 | Claude API Key | |
-| `groq-llama3-70b` | Groq | 🧠🧠🧠 | **FREE** *(with rate limits)* | Groq API Key | Blazing fast; recommended |
-| `groq-llama3-8b` | Groq | 🧠🧠 | **FREE** *(with rate limits)* | Groq API Key | Blazing fast |
-| `groq-mixtral-8x7b` | Groq | 🧠 | **FREE** *(with rate limits)* | Groq API Key | Blazing fast |
-| `groq-gemma-7b` | Groq | 🧠 | **FREE** *(with rate limits)* | Groq API Key | Blazing fast |
+(Ratings are based on my subjective opinion and experience. Your mileage may vary.)
 
-*(Based on my subjective opinion and experience. Your mileage may vary.)*
+| Model Name | Provider | Accuracy | Cost | Notes |
+|----------|----------|----------|----------|----------|
+| `local` | N/A | ¯\_(ツ)_/¯ | **FREE** | Needs local OpenAI API compatible LLM Api Endpoint (i.e. llama.cpp) |
+| `gpt-4o` | OpenAI | 🧠🧠🧠 | 💲💲💲 | Default model |
+| `gpt-4-turbo` | OpenAI | 🧠🧠🧠 | 💲💲💲💲 | |
+| `gpt-3.5-turbo-instruct` | OpenAI | 🧠🧠 | 💲💲 | |
+| `claude-3-opus` | Claude | 🧠🧠🧠🧠 | 💲💲💲💲 | Fairly slow (>10s) |
+| `claude-3-sonnet` | Claude | 🧠🧠🧠 | 💲💲💲 | Somewhat slow (~5s) |
+| `claude-3-haiku` | Claude | 🧠 | 💲💲 | |
+| `groq-llama3-70b` | Groq | 🧠🧠🧠 | **FREE** *(with rate limits)* | Blazing fast; recommended |
+| `groq-llama3-8b` | Groq | 🧠🧠 | **FREE** *(with rate limits)* | Blazing fast |
+| `groq-mixtral-8x7b` | Groq | 🧠 | **FREE** *(with rate limits)* | Blazing fast |
+| `groq-gemma-7b` | Groq | 🧠 | **FREE** *(with rate limits)* | Blazing fast |
 
 ## Roadmap
 

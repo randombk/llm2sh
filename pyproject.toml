@@ -25,3 +25,7 @@ version = { file = ".latest-version.generated.txt" }
 requires = ["setuptools", "wheel"]
 build-backend = "setuptools.build_meta"
 
+[project.urls]
+"Changelog" = "https://github.com/randombk/llm2sh/blob/master/.version"
+"Source" = "https://github.com/randombk/llm2sh"
+"Tracker" = "https://github.com/randombk/llm2sh/issues"

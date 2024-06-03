@@ -2,6 +2,13 @@
   {
     "major": 0,
     "minor": 3,
+    "patch": 2,
+    "update": 0,
+    "changelog": "\n    Minor Changes:\n      - Add project links to pypi\n  "
+  },
+  {
+    "major": 0,
+    "minor": 3,
     "patch": 1,
     "update": 0,
     "changelog": "\n    Minor Changes:\n      - Update README.md\n  "
