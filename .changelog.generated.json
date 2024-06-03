@@ -1,6 +1,20 @@
 [
   {
     "major": 0,
+    "minor": 3,
+    "patch": 1,
+    "update": 0,
+    "changelog": "\n    Minor Changes:\n      - Update README.md\n  "
+  },
+  {
+    "major": 0,
+    "minor": 3,
+    "patch": 0,
+    "update": 0,
+    "changelog": "\n    Major Changes:\n      - Rename to 'llm2sh' to make it a nicer command name\n      - Implement groq support\n      - Move the `-y` flag to `-f` and add additional command line options\n  "
+  },
+  {
+    "major": 0,
     "minor": 2,
     "patch": 1,
     "update": 0,

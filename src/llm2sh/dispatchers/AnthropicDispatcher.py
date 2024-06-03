@@ -9,8 +9,8 @@ from ..config import Config
 
 
 class AnthropicDispatcher(DefaultDispatcher):
-  def __init__(self, key: str, model: str, config: Config, verbose: bool = False):
-    super().__init__('', key, model, config, verbose)
+  def __init__(self, key: str, model: str, config: Config, temperature: float, verbose: bool = False):
+    super().__init__('', key, model, config, temperature, verbose)
 
 
   def dispatch(self, request_str: str):
@@ -26,7 +26,7 @@ class AnthropicDispatcher(DefaultDispatcher):
     message = client.messages.create(
         model=self.model,
         max_tokens=2000,
-        temperature=self.config.temperature,
+        temperature=self.temperature,
         system=system_prompt,
         messages=[
           { "role": "user", "content": request_str }

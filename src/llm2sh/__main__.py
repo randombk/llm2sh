@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 
-from .llmdo import LlmDo
+from .cli import Cli
 
 def cli():
-  LlmDo()
+  Cli()
 
 if __name__ == '__main__':
-  LlmDo()
+  Cli()

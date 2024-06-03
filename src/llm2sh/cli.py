@@ -11,22 +11,24 @@ from .util import ethrow
 from .dispatchers.DefaultDispatcher import DefaultDispatcher
 from .dispatchers.AnthropicDispatcher import AnthropicDispatcher
 
-class LlmDo(object):
+class Cli(object):
   def __init__(self):
     parser = argparse.ArgumentParser(
       description='Ask GPT to run a command',
-      usage='llmdo [options] <request>',
+      usage='llm2sh [options] <request>',
       add_help = True,
     )
 
     parser.add_argument('request', help = 'request for gpt', action='store', nargs='*')
-    # parser.add_argument('--setup', help = 'configure llmdo', action = 'store_true')
-    parser.add_argument('-c', '--config', help = 'specify config file, (Default: ~/.config/llmdo/llmdo.json)',
-                        action = 'store', default = '~/.config/llmdo/llmdo.json')
+    # parser.add_argument('--setup', help = 'configure llm2sh', action = 'store_true')
+    parser.add_argument('-c', '--config', help = 'specify config file, (Default: ~/.config/llm2sh/llm2sh.json)',
+                        action = 'store', default = '~/.config/llm2sh/llm2sh.json')
+    parser.add_argument('-d', '--dry-run', help = 'do not run the generated command', action = 'store_true')
     parser.add_argument('-l', '--list-models', help = 'list available models', action = 'store_true')
     parser.add_argument('-m', '--model', help = 'specify which model to use', action = 'store')
+    parser.add_argument('-t', '--temperature', help = 'use a custom sampling temperature', action = 'store')
     parser.add_argument('-v', '--verbose', help = 'print verbose debug information', action = 'store_true')
-    parser.add_argument('-y', '--yolo', help = 'run whatever GPT wants, without confirmation', action = 'store_true')
+    parser.add_argument('-f', '--yolo', '--force', help = 'run whatever GPT wants, without confirmation', action = 'store_true')
 
     #
     # Load Config
@@ -91,7 +93,7 @@ class LlmDo(object):
         model.ljust(max_just_name + 2) +
         ('OK' if avail else 'NOT AVAILABLE').rjust(max_just_avail) +
         " | "
-        f"({model_id}) {help}"
+        f"{help} ({model_id})"
       )
 
 
@@ -102,6 +104,9 @@ class LlmDo(object):
     claude_available = len(self.config.effective_claude_key) > 0
     claude_str = "Ready" if claude_available else f"Requires Claude API key"
 
+    groq_available = len(self.config.effective_groq_key) > 0
+    groq_str = "Ready" if groq_available else f"Requires Groq API key"
+
     local_available = len(self.config.local_uri) > 0
     local_str = f"Ready - {self.config.local_uri}" if local_available else f"Requires local LLM API URI"
 
@@ -110,14 +115,21 @@ class LlmDo(object):
       ('gpt-4o', openai_available, openai_str, 'OPENAI', 'gpt-4o'),
       ('gpt-3.5-turbo-instruct', openai_available, openai_str, 'OPENAI', 'gpt-3.5-turbo-instruct'),
       ('gpt-4-turbo', openai_available, openai_str, 'OPENAI', 'gpt-4-turbo'),
+
       ('claude-3-opus', claude_available, claude_str, 'CLAUDE', 'claude-3-opus-20240229'),
       ('claude-3-sonnet', claude_available, claude_str, 'CLAUDE', 'claude-3-sonnet-20240229'),
       ('claude-3-haiku', claude_available, claude_str, 'CLAUDE', 'claude-3-haiku-20240307'),
+
+      ('groq-llama3-8b', groq_available, groq_str, 'GROQ', 'llama3-8b-8192'),
+      ('groq-llama3-70b', groq_available, groq_str, 'GROQ', 'llama3-70b-8192'),
+      ('groq-mixtral-8x7b', groq_available, groq_str, 'GROQ', 'mixtral-8x7b-32768'),
+      ('groq-gemma-7b', groq_available, groq_str, 'GROQ', 'gemma-7b-it'),
     ]
 
 
   def dispatch_request(self, request: str) -> List[str]:
     (_, _, _, model_type, model_id) = self.models[self.selected_model]
+    temperature = self.args.temperature or self.config.temperature
 
     # TOTO: Implement dispatcher selection based on the chosen model
     if model_type == 'OPENAI':
@@ -126,6 +138,7 @@ class LlmDo(object):
         key = self.config.effective_openai_key,
         model = model_id,
         config = self.config,
+        temperature=temperature,
         verbose=self.args.verbose,
       )
     elif model_type == 'CLAUDE':
@@ -133,30 +146,52 @@ class LlmDo(object):
         key = self.config.effective_claude_key,
         model = model_id,
         config = self.config,
+        temperature=temperature,
+        verbose=self.args.verbose,
+      )
+    elif model_type == 'GROQ':
+      dispatcher = DefaultDispatcher(
+        uri = 'https://api.groq.com/openai/v1',
+        key = self.config.effective_groq_key,
+        model = model_id,
+        config = self.config,
+        temperature=temperature,
         verbose=self.args.verbose,
       )
     elif model_type == 'LOCAL':
       dispatcher = DefaultDispatcher(
         uri = self.config.local_uri,
         key = self.config.local_api_key,
-        model = model_id,
+        model = self.config.local_model_name,
         config = self.config,
+        temperature=temperature,
         verbose=self.args.verbose,
       )
+    else:
+      ethrow(f"Unknown model type {model_type}")
 
     return dispatcher.dispatch(request)
 
 
   def run_request(self, response: List[str]):
-    if not self.args.yolo and not self.config.i_like_to_live_dangerously:
-      # Prompt the user for confirmation
+    if not self.args.dry_run:
       print('You are about to run the following commands:')
-      for command in response:
-        print(f'  $ {command}')
+    else:
+      print('(Dry Run) The LLM suggested these commands:')
+
+    for command in response:
+      print(f'  $ {command}')
+
+    if self.args.dry_run:
+      return
+
+    # Prompt the user for confirmation
+    if (not self.args.yolo) and (not self.config.i_like_to_live_dangerously):
       print('Run the above commands? [y/N]')
       if input().lower() != 'y':
         print('Request canceled')
         return
+
     self.run_commands(response)
 
 

@@ -1,5 +1,5 @@
 [project]
-name = "llmdo"
+name = "llm2sh"
 description = "Ask GPT to run a command"
 dynamic = ["version"]
 license = {text = "GPL-3.0"}
@@ -16,7 +16,7 @@ dependencies = [
 dev = ["build", "twine"]
 
 [project.scripts]
-llmdo = "llmdo.__main__:cli"
+llm2sh = "llm2sh.__main__:cli"
 
 [tool.setuptools.dynamic]
 version = { file = ".latest-version.generated.txt" }

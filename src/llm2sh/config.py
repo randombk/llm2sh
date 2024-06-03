@@ -9,9 +9,11 @@ class Config:
 
   openai_api_key: str = ''
   claude_api_key: str = ''
+  groq_api_key: str = ''
 
-  local_uri: str = 'http://localhost:8000/v1'
+  local_uri: str = 'http://localhost:5000/v1'
   local_api_key: str = ''
+  local_model_name: str = ''
 
   temperature: float = 0.2
 
@@ -31,7 +33,8 @@ class Config:
       default_model = d.get('default_model', 'gpt-3.5-turbo'),
       openai_api_key = d.get('openai_api_key', ''),
       claude_api_key = d.get('claude_api_key', ''),
-      local_uri = d.get('local_uri', 'http://localhost:8000/v1'),
+      groq_api_key = d.get('groq_api_key', ''),
+      local_uri = d.get('local_uri', 'http://localhost:5000/v1'),
       local_api_key = d.get('local_api_key', ''),
       temperature = d.get('temperature', 0.2),
       i_like_to_live_dangerously = d.get('i_like_to_live_dangerously', False),
@@ -54,6 +57,16 @@ class Config:
       return self.claude_api_key
     elif len(os.environ.get('ANTHROPIC_API_KEY', '')) > 0:
       return os.environ['ANTHROPIC_API_KEY']
+    else:
+      return ''
+
+
+  @property
+  def effective_groq_key(self) -> str:
+    if len(self.groq_api_key) > 0:
+      return self.groq_api_key
+    elif len(os.environ.get('GROQ_API_KEY', '')) > 0:
+      return os.environ['GROQ_API_KEY']
     else:
       return ''
 

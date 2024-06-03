@@ -13,17 +13,18 @@ from ..util import unquote_all
 
 class DefaultDispatcher:
   """
-  Default fallback dispatcher for llmdo, used when there isn't a more specific
+  Default fallback dispatcher for llm2sh, used when there isn't a more specific
   dispatcher available. This dispatcher can be extended to customize the
   system prompt or to use a different API.
   """
 
-  def __init__(self, uri: str, key: str, model: str, config: Config, verbose: bool = False):
+  def __init__(self, uri: str, key: str, model: str, config: Config, temperature: float, verbose: bool = False):
     self.uri = uri
     self.key = key
     self.model = model
     self.verbose = verbose
     self.config = config
+    self.temperature = temperature
 
 
   def dispatch(self, request_str: str):
@@ -41,7 +42,7 @@ class DefaultDispatcher:
     )
     message = client.chat.completions.create(
         model=self.model,
-        temperature=self.config.temperature,
+        temperature=self.temperature,
         messages=[
           { "role": "system", "content": system_prompt },
           { "role": "user", "content": request_str }

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 export = DLPModule(
-  name="llmdo",
+  name="llm2sh",
   desc="[PUBLIC] Ask GPT to run a command",
   license=[
     "GPL-3.0",
