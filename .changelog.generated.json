@@ -2,9 +2,16 @@
   {
     "major": 0,
     "minor": 3,
+    "patch": 3,
+    "update": 0,
+    "changelog": "\n    Minor Changes:\n      - Improve handling of multi-line commands\n      - Misc. changes to the README\n  "
+  },
+  {
+    "major": 0,
+    "minor": 3,
     "patch": 2,
     "update": 0,
-    "changelog": "\n    Minor Changes:\n      - Add project links to pypi\n  "
+    "changelog": "\n    Minor Changes:\n      - Add project links to pypi\n      - Misc. changes to the README\n  "
   },
   {
     "major": 0,

@@ -1,6 +1,11 @@
 #!/usr/bin/env python3
 
 export = [
+  Version(0, 3, 3, changelog="""
+    Minor Changes:
+      - Improve handling of multi-line commands
+      - Misc. changes to the README
+  """),
   Version(0, 3, 2, changelog="""
     Minor Changes:
       - Add project links to pypi

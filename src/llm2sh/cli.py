@@ -212,8 +212,7 @@ class Cli(object):
     # Send all the commands at once and terminate the input stream so
     # we don't hang on reading the output
     for command in commands:
-      escaped = "'" + "$ " + command.replace("'", "'\\''") + "'"
-      process.stdin.write(f"echo {escaped}\n")
+      print(f"$ {command}")
       process.stdin.write(command + '\n')
       process.stdin.flush()
     process.stdin.close()

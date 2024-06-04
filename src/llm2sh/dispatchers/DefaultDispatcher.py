@@ -203,9 +203,9 @@ class DefaultDispatcher:
     Cleans the output by removing any leading or trailing whitespace and other common mistakes.
     """
 
-    # Remove trailing and leading whitespace. This does remove whitespace in front of the command, which does have
-    # meaning within bash (skip writing history), but it's fine to remove it this context.
-    cleaned = [i.strip() for i in output]
+    # Remove trailing whitespace. Keep leading whitespace in case the LLM is trying to
+    # generate a Python script or something similar.
+    cleaned = [i.rstrip() for i in output]
 
     cleaned = [
       # Remove quotes around the commands

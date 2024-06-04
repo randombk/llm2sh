@@ -109,17 +109,17 @@ llm2sh --force "delete all temporary files"
 
 | Model Name | Provider | Accuracy | Cost | Notes |
 |----------|----------|----------|----------|----------|
-| `local` | N/A | ¯\_(ツ)_/¯ | **FREE** | Needs local OpenAI API compatible LLM Api Endpoint (i.e. llama.cpp) |
+| `local` | N/A | ¯\\_(ツ)_/¯ | **FREE** | Needs local OpenAI API compatible LLM Api Endpoint (i.e. llama.cpp) |
 | `gpt-4o` | OpenAI | 🧠🧠🧠 | 💲💲💲 | Default model |
 | `gpt-4-turbo` | OpenAI | 🧠🧠🧠 | 💲💲💲💲 | |
 | `gpt-3.5-turbo-instruct` | OpenAI | 🧠🧠 | 💲💲 | |
 | `claude-3-opus` | Claude | 🧠🧠🧠🧠 | 💲💲💲💲 | Fairly slow (>10s) |
 | `claude-3-sonnet` | Claude | 🧠🧠🧠 | 💲💲💲 | Somewhat slow (~5s) |
 | `claude-3-haiku` | Claude | 🧠 | 💲💲 | |
-| `groq-llama3-70b` | Groq | 🧠🧠🧠 | **FREE** *(with rate limits)* | Blazing fast; recommended |
-| `groq-llama3-8b` | Groq | 🧠🧠 | **FREE** *(with rate limits)* | Blazing fast |
-| `groq-mixtral-8x7b` | Groq | 🧠 | **FREE** *(with rate limits)* | Blazing fast |
-| `groq-gemma-7b` | Groq | 🧠 | **FREE** *(with rate limits)* | Blazing fast |
+| `groq-llama3-70b` | Groq | 🧠🧠🧠 | **FREE** _(with rate limits)_ | Blazing fast; recommended |
+| `groq-llama3-8b` | Groq | 🧠🧠 | **FREE** _(with rate limits)_ | Blazing fast |
+| `groq-mixtral-8x7b` | Groq | 🧠 | **FREE** _(with rate limits)_ | Blazing fast |
+| `groq-gemma-7b` | Groq | 🧠 | **FREE** _(with rate limits)_ | Blazing fast |
 
 ## Roadmap
 
