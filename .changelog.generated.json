@@ -2,6 +2,13 @@
   {
     "major": 0,
     "minor": 3,
+    "patch": 4,
+    "update": 0,
+    "changelog": "\n    Minor Changes:\n      - Use native bash debug logging to print out the command that is being run\n      - Improve the system prompt to handle more complex cases using a Python script\n  "
+  },
+  {
+    "major": 0,
+    "minor": 3,
     "patch": 3,
     "update": 0,
     "changelog": "\n    Minor Changes:\n      - Improve handling of multi-line commands\n      - Misc. changes to the README\n  "

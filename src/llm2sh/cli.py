@@ -26,6 +26,7 @@ class Cli(object):
     parser.add_argument('-d', '--dry-run', help = 'do not run the generated command', action = 'store_true')
     parser.add_argument('-l', '--list-models', help = 'list available models', action = 'store_true')
     parser.add_argument('-m', '--model', help = 'specify which model to use', action = 'store')
+    parser.add_argument('-s', '--silent', help = 'don\'t ask bash to output each command before running it.', action = 'store_true')
     parser.add_argument('-t', '--temperature', help = 'use a custom sampling temperature', action = 'store')
     parser.add_argument('-v', '--verbose', help = 'print verbose debug information', action = 'store_true')
     parser.add_argument('-f', '--yolo', '--force', help = 'run whatever GPT wants, without confirmation', action = 'store_true')
@@ -208,11 +209,13 @@ class Cli(object):
 
     # Configure the target shell - abort on errors
     process.stdin.write('set -e\n')
+    if not self.args.silent:
+      process.stdin.write('set -o xtrace\n')
+    process.stdin.flush()
 
     # Send all the commands at once and terminate the input stream so
     # we don't hang on reading the output
     for command in commands:
-      print(f"$ {command}")
       process.stdin.write(command + '\n')
       process.stdin.flush()
     process.stdin.close()

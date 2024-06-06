@@ -1,6 +1,11 @@
 #!/usr/bin/env python3
 
 export = [
+  Version(0, 3, 4, changelog="""
+    Minor Changes:
+      - Use native bash debug logging to print out the command that is being run
+      - Improve the system prompt to handle more complex cases using a Python script
+  """),
   Version(0, 3, 3, changelog="""
     Minor Changes:
       - Improve handling of multi-line commands

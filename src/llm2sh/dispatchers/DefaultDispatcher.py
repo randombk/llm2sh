@@ -184,7 +184,8 @@ class DefaultDispatcher:
 
         Make sure you output valid shell commands, paying special attention to quoting and escaping.
         Do not wrap the response in quotes or backticks. If you want to provide additional information,
-        please include it in a shell comment (i.e. `#`) or use `echo`.
+        please include it in a shell comment (i.e. `#`) or use `echo`. For more complex tasks, you can
+        use `cat` to write a Python script to a file and then execute it.
 
         YOU MUST RESPOND WITH ONLY VALID SHELL COMMANDS. DO NOT INCLUDE ANYTHING ELSE IN YOUR RESPONSE.
       """)
