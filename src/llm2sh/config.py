@@ -5,7 +5,7 @@ from dataclasses import dataclass, asdict
 
 @dataclass
 class Config:
-  default_model: str = 'gpt-4o'
+  default_model: str = 'groq-llama3-70b'
 
   openai_api_key: str = ''
   claude_api_key: str = ''
@@ -30,7 +30,7 @@ class Config:
   @classmethod
   def from_dict(cls, d: dict) -> "Config":
     return cls(
-      default_model = d.get('default_model', 'gpt-3.5-turbo'),
+      default_model = d.get('default_model', 'groq-llama3-70b'),
       openai_api_key = d.get('openai_api_key', ''),
       claude_api_key = d.get('claude_api_key', ''),
       groq_api_key = d.get('groq_api_key', ''),

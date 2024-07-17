@@ -6,6 +6,7 @@ from anthropic import Anthropic
 
 from .DefaultDispatcher import DefaultDispatcher
 from ..config import Config
+from ..util import eprint
 
 
 class AnthropicDispatcher(DefaultDispatcher):
@@ -20,7 +21,7 @@ class AnthropicDispatcher(DefaultDispatcher):
 
     system_prompt = self._get_system_prompt(request_str)
     if self.verbose:
-      print(f"[DEBUG]: System prompt:\n{system_prompt}")
+      eprint(f"[DEBUG]: System prompt:\n{system_prompt}")
 
     client = Anthropic(api_key=self.key)
     message = client.messages.create(
@@ -35,7 +36,7 @@ class AnthropicDispatcher(DefaultDispatcher):
 
     response = message.content[0].text
     if self.verbose:
-      print(f"[DEBUG]: Response:\n{response}")
+      eprint(f"[DEBUG]: Response:\n{response}")
 
     return self._clean_output(response.split('\n'))
 

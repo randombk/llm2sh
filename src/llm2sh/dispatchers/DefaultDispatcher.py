@@ -9,7 +9,7 @@ from openai import OpenAI
 from openai.types.chat.chat_completion_message import ChatCompletionMessage
 
 from ..config import Config
-from ..util import unquote_all
+from ..util import unquote_all, eprint
 
 class DefaultDispatcher:
   """
@@ -34,7 +34,7 @@ class DefaultDispatcher:
 
     system_prompt = self._get_system_prompt(request_str)
     if self.verbose:
-      print(f"[DEBUG]: System prompt:\n{system_prompt}")
+      eprint(f"[DEBUG]: System prompt:\n{system_prompt}")
 
     client = OpenAI(
       base_url=None if self.uri == '' else self.uri,
@@ -51,7 +51,7 @@ class DefaultDispatcher:
 
     response = message.choices[0].message.content
     if self.verbose:
-      print(f"[DEBUG]: Response:\n{response}")
+      eprint(f"[DEBUG]: Response:\n{response}")
 
     return self._clean_output(response.split('\n'))
 
@@ -154,7 +154,7 @@ class DefaultDispatcher:
 
     # Always keep a minimum of 20 items - there's more opportunity to remove items from the
     # directory contents listing than the environment variables listing.
-    take_n = min(int(len(items) * summarize_factor), 20)
+    take_n = max(int(len(items) * summarize_factor), 20)
     return items[:take_n]
 
 

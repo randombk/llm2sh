@@ -2,6 +2,20 @@
   {
     "major": 0,
     "minor": 3,
+    "patch": 6,
+    "update": 0,
+    "changelog": "\n    Minor Changes:\n      - Clean up first-time setup experience\n      - Add claude-3-5-sonnet model ID\n  "
+  },
+  {
+    "major": 0,
+    "minor": 3,
+    "patch": 5,
+    "update": 0,
+    "changelog": "\n    Minor Changes:\n      - Fix bug that caused a cap of only 20 environment variable names to be sent to the LLM\n      - Knock gpt-4o down a peg as it has consistently disappointed and underperformed in testing\n      - Improve out-of-box experience by instructing the user to setup their API key\n  "
+  },
+  {
+    "major": 0,
+    "minor": 3,
     "patch": 4,
     "update": 0,
     "changelog": "\n    Minor Changes:\n      - Use native bash debug logging to print out the command that is being run\n      - Improve the system prompt to handle more complex cases using a Python script\n  "

@@ -7,7 +7,7 @@ import subprocess
 from typing import List, Optional, Dict, Set, Tuple
 
 from .config import Config
-from .util import ethrow
+from .util import ethrow, eprint
 from .dispatchers.DefaultDispatcher import DefaultDispatcher
 from .dispatchers.AnthropicDispatcher import AnthropicDispatcher
 
@@ -30,17 +30,23 @@ class Cli(object):
     parser.add_argument('-t', '--temperature', help = 'use a custom sampling temperature', action = 'store')
     parser.add_argument('-v', '--verbose', help = 'print verbose debug information', action = 'store_true')
     parser.add_argument('-f', '--yolo', '--force', help = 'run whatever GPT wants, without confirmation', action = 'store_true')
+    parser.add_argument('--setup', help = 'Open an editor to the configuration file', action = 'store_true')
 
     #
     # Load Config
     #
     self.args = parser.parse_args()
+    config_file = os.path.expanduser(self.args.config)
+    self.config = self.load_config(config_file)
 
-    # if self.args.setup:
-    #   # self.setup()
-    #   ethrow('[ERROR]: Setup not implemented')
+    # open the config file in the user's preferred text editor
+    if self.args.setup:
+      if 'EDITOR' not in os.environ:
+        eprint('No EDITOR set. Please set the EDITOR environment variable to your preferred text editor')
+        return
 
-    self.config = self.load_config(self.args.config)
+      subprocess.run([os.environ['EDITOR'], config_file])
+      return
 
     #
     # Load Models
@@ -54,7 +60,16 @@ class Cli(object):
 
     self.selected_model = self.args.model or self.config.default_model
     if self.selected_model not in self.models:
-      ethrow(f"Model {self.selected_model} not available! Configure {self.args.config} or use --list-models to see available models.")
+      eprint(f"Model {self.selected_model} not available! Configure {self.args.config} or use --list-models to see available models.")
+
+      # Print additional information if no models are available, i.e. on a fresh install
+      # Don't consider local models for this check
+      if len([v for k, v in self.models.items() if k != 'local']) == 0:
+        eprint("\nNo models are configured. Use `llm2sh --setup` to configure a model.")
+        eprint("For first time users, we recommend using Groq Llama3-70b. It's free and provides a good balance between latency and quality.")
+        eprint("Sign up for an API key at https://console.groq.com/")
+
+      return
 
     #
     # Run Request
@@ -68,11 +83,9 @@ class Cli(object):
 
 
   def load_config(self, config_file: str) -> Config:
-    config_file = os.path.expanduser(config_file)
-
     if not os.path.exists(config_file):
       if self.args.verbose:
-        print(f"[DEBUG] Config file {config_file} not found, creating a new one.")
+        eprint(f"[DEBUG] Config file {config_file} not found, creating a new one.")
       config = Config()
     else:
       config = Config.load_config(config_file)
@@ -117,6 +130,7 @@ class Cli(object):
       ('gpt-3.5-turbo-instruct', openai_available, openai_str, 'OPENAI', 'gpt-3.5-turbo-instruct'),
       ('gpt-4-turbo', openai_available, openai_str, 'OPENAI', 'gpt-4-turbo'),
 
+      ('claude-3-5-sonnet', claude_available, claude_str, 'CLAUDE', 'claude-3-5-sonnet-20240620'),
       ('claude-3-opus', claude_available, claude_str, 'CLAUDE', 'claude-3-opus-20240229'),
       ('claude-3-sonnet', claude_available, claude_str, 'CLAUDE', 'claude-3-sonnet-20240229'),
       ('claude-3-haiku', claude_available, claude_str, 'CLAUDE', 'claude-3-haiku-20240307'),
