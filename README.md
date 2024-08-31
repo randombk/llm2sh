@@ -26,6 +26,7 @@ For OpenAI, Claude, and Groq, you will need to have an API key to use this tool.
 - OpenAI: You can sign up for an API key on the [OpenAI website](https://platform.openai.com/).
 - Claude: You can sign up for an API key on the [Claude API Console](https://console.anthropic.com/dashboard).
 - Groq: You can sign up for an API key on the [GroqCloud Console](https://console.groq.com/).
+- Cerebras: You can sign up for an API key on the [Cerebras Developer Platform](https://cloud.cerebras.ai/).
 
 ### Configuration
 
@@ -114,6 +115,8 @@ llm2sh --force "delete all temporary files"
 | `groq-llama3-8b` | Groq | 🧠🧠 | **FREE** _(with rate limits)_ | Blazing fast |
 | `groq-mixtral-8x7b` | Groq | 🧠 | **FREE** _(with rate limits)_ | Blazing fast |
 | `groq-gemma-7b` | Groq | 🧠 | **FREE** _(with rate limits)_ | Blazing fast |
+| `cerebras-llama3-70b` | Cerebras | 🧠🧠🧠 | **FREE** _(with rate limits)_ | Blazing fast; recommended |
+| `cerebras-llama3-8b` | Cerebras | 🧠🧠 | **FREE** _(with rate limits)_ | Blazing fast |
 | `gpt-4o` | OpenAI | 🧠🧠 | 💲💲💲 | Default model |
 | `gpt-4-turbo` | OpenAI | 🧠🧠🧠 | 💲💲💲💲 | |
 | `gpt-3.5-turbo-instruct` | OpenAI | 🧠🧠 | 💲💲 | |

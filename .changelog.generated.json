@@ -2,6 +2,13 @@
   {
     "major": 0,
     "minor": 3,
+    "patch": 7,
+    "update": 0,
+    "changelog": "\n    Minor Changes:\n      - Add support for Cerebras API\n  "
+  },
+  {
+    "major": 0,
+    "minor": 3,
     "patch": 6,
     "update": 0,
     "changelog": "\n    Minor Changes:\n      - Clean up first-time setup experience\n      - Add claude-3-5-sonnet model ID\n  "

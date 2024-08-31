@@ -121,6 +121,9 @@ class Cli(object):
     groq_available = len(self.config.effective_groq_key) > 0
     groq_str = "Ready" if groq_available else f"Requires Groq API key"
 
+    cerebras_available = len(self.config.effective_cerebras_key) > 0
+    cerebras_str = "Ready" if cerebras_available else f"Requires Cerebras API key"
+
     local_available = len(self.config.local_uri) > 0
     local_str = f"Ready - {self.config.local_uri}" if local_available else f"Requires local LLM API URI"
 
@@ -139,6 +142,9 @@ class Cli(object):
       ('groq-llama3-70b', groq_available, groq_str, 'GROQ', 'llama3-70b-8192'),
       ('groq-mixtral-8x7b', groq_available, groq_str, 'GROQ', 'mixtral-8x7b-32768'),
       ('groq-gemma-7b', groq_available, groq_str, 'GROQ', 'gemma-7b-it'),
+
+      ('cerebras-llama3-8b', cerebras_available, cerebras_str, 'CEREBRAS', 'llama3.1-8b'),
+      ('cerebras-llama3-70b', cerebras_available, cerebras_str, 'CEREBRAS', 'llama3.1-70b'),
     ]
 
 
@@ -168,6 +174,15 @@ class Cli(object):
       dispatcher = DefaultDispatcher(
         uri = 'https://api.groq.com/openai/v1',
         key = self.config.effective_groq_key,
+        model = model_id,
+        config = self.config,
+        temperature=temperature,
+        verbose=self.args.verbose,
+      )
+    elif model_type == 'CEREBRAS':
+      dispatcher = DefaultDispatcher(
+        uri = 'https://api.cerebras.ai/v1',
+        key = self.config.effective_cerebras_key,
         model = model_id,
         config = self.config,
         temperature=temperature,

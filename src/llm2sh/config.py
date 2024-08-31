@@ -10,6 +10,7 @@ class Config:
   openai_api_key: str = ''
   claude_api_key: str = ''
   groq_api_key: str = ''
+  cerebras_api_key: str = ''
 
   local_uri: str = 'http://localhost:5000/v1'
   local_api_key: str = ''
@@ -34,6 +35,7 @@ class Config:
       openai_api_key = d.get('openai_api_key', ''),
       claude_api_key = d.get('claude_api_key', ''),
       groq_api_key = d.get('groq_api_key', ''),
+      cerebras_api_key = d.get('cerebras_api_key', ''),
       local_uri = d.get('local_uri', 'http://localhost:5000/v1'),
       local_api_key = d.get('local_api_key', ''),
       temperature = d.get('temperature', 0.2),
@@ -67,6 +69,16 @@ class Config:
       return self.groq_api_key
     elif len(os.environ.get('GROQ_API_KEY', '')) > 0:
       return os.environ['GROQ_API_KEY']
+    else:
+      return ''
+
+
+  @property
+  def effective_cerebras_key(self) -> str:
+    if len(self.cerebras_api_key) > 0:
+      return self.cerebras_api_key
+    elif len(os.environ.get('CEREBRAS_API_KEY', '')) > 0:
+      return os.environ['CEREBRAS_API_KEY']
     else:
       return ''
 
