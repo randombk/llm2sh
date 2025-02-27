@@ -2,7 +2,7 @@
 
 import getpass
 import os
-from typing import List
+from typing import List, Optional
 import textwrap
 
 from openai import OpenAI
@@ -18,13 +18,16 @@ class DefaultDispatcher:
   system prompt or to use a different API.
   """
 
-  def __init__(self, uri: str, key: str, model: str, config: Config, temperature: float, verbose: bool = False):
+  def __init__(self, uri: str, key: str, model: str, config: Config,
+               temperature: float, verbose: bool = False,
+               additional_headers: Optional[dict[str, str]] = None):
     self.uri = uri
     self.key = key
     self.model = model
     self.verbose = verbose
     self.config = config
     self.temperature = temperature
+    self.additional_headers = additional_headers
 
 
   def dispatch(self, request_str: str):
@@ -43,6 +46,7 @@ class DefaultDispatcher:
     message = client.chat.completions.create(
         model=self.model,
         temperature=self.temperature,
+        extra_headers=self.additional_headers,
         messages=[
           { "role": "system", "content": system_prompt },
           { "role": "user", "content": request_str }
@@ -182,10 +186,14 @@ class DefaultDispatcher:
 
         \n{self._additional_context(factor)}
 
-        Make sure you output valid shell commands, paying special attention to quoting and escaping.
-        Do not wrap the response in quotes or backticks. If you want to provide additional information,
-        please include it in a shell comment (i.e. `#`) or use `echo`. For more complex tasks, you can
-        use `cat` to write a Python script to a file and then execute it.
+        Make sure you output valid shell commands. Everything you output must be ready to copy+paste directly into a terminal.
+        This means:
+          * Pay special attention to quoting and escaping.
+          * Do not wrap the response in quotes, backticks, markdown, etc.
+          * If you want to provide additional information or commentary, please
+            include it in a shell comment (i.e. `#`) or use `echo "..."`.
+
+        For more complex tasks, you can use `cat` to write a Python script to a file and then execute it.
 
         YOU MUST RESPOND WITH ONLY VALID SHELL COMMANDS. DO NOT INCLUDE ANYTHING ELSE IN YOUR RESPONSE.
       """)

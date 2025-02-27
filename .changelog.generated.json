@@ -1,6 +1,20 @@
 [
   {
     "major": 0,
+    "minor": 4,
+    "patch": 0,
+    "update": 0,
+    "changelog": "\n    Major Changes:\n      - Refactor how models and model providers are specified, to avoid hard-coding\n        available models.\n  "
+  },
+  {
+    "major": 0,
+    "minor": 3,
+    "patch": 8,
+    "update": 0,
+    "changelog": "\n    Minor Changes:\n      - Update paths and default models to catch up with new releases\n      - Add OpenRouter support\n      - Default new installations to gpt-4o\n  "
+  },
+  {
+    "major": 0,
     "minor": 3,
     "patch": 7,
     "update": 0,

@@ -24,7 +24,7 @@ class Cli(object):
     parser.add_argument('-c', '--config', help = 'specify config file, (Default: ~/.config/llm2sh/llm2sh.json)',
                         action = 'store', default = '~/.config/llm2sh/llm2sh.json')
     parser.add_argument('-d', '--dry-run', help = 'do not run the generated command', action = 'store_true')
-    parser.add_argument('-l', '--list-models', help = 'list available models', action = 'store_true')
+    parser.add_argument('-l', '--list-providers', help = 'list available model providers', action = 'store_true')
     parser.add_argument('-m', '--model', help = 'specify which model to use', action = 'store')
     parser.add_argument('-s', '--silent', help = 'don\'t ask bash to output each command before running it.', action = 'store_true')
     parser.add_argument('-t', '--temperature', help = 'use a custom sampling temperature', action = 'store')
@@ -51,23 +51,24 @@ class Cli(object):
     #
     # Load Models
     #
-    self.model_list = self.load_models()
-    self.models = {i[0]: i for i in self.model_list if i[1]}
+    self.provider_list = self.load_model_providers()
+    self.providers = {i[0]: i for i in self.provider_list if i[1]}
 
-    if self.args.list_models:
-      self.list_models()
+    if self.args.list_providers:
+      self.list_providers()
       return
 
-    self.selected_model = self.args.model or self.config.default_model
-    if self.selected_model not in self.models:
-      eprint(f"Model {self.selected_model} not available! Configure {self.args.config} or use --list-models to see available models.")
+    (self.selected_provider, self.selected_model) = self.parse_model_specifier(self.args.model or self.config.default_model)
+    if self.selected_provider not in self.providers:
+      eprint(f"Provider {self.selected_provider} not available! Configure {self.args.config} or use --list-providers to see available providers.")
 
-      # Print additional information if no models are available, i.e. on a fresh install
-      # Don't consider local models for this check
-      if len([v for k, v in self.models.items() if k != 'local']) == 0:
-        eprint("\nNo models are configured. Use `llm2sh --setup` to configure a model.")
-        eprint("For first time users, we recommend using Groq Llama3-70b. It's free and provides a good balance between latency and quality.")
-        eprint("Sign up for an API key at https://console.groq.com/")
+      # Print additional information if no providers are available, i.e. on a fresh install
+      # Don't consider local providers for this check
+      if len([v for k, v in self.providers.items() if k != 'local']) == 0:
+        eprint("\nNo providers are configured. Use `llm2sh --setup` to configure a provider.")
+        eprint("For first time users, we recommend using Groq or Cerebras Llama3.1. Both are free and provide"
+               " a good balance between latency and quality.")
+        eprint("Sign up for an API key at https://console.groq.com/ or https://cerebras.ai/inference")
 
       return
 
@@ -95,28 +96,53 @@ class Cli(object):
     return config
 
 
-  def list_models(self):
-    print('Available models:')
-    print(f'Models can be configured via {self.args.config}\n')
+  @staticmethod
+  def parse_model_specifier(model_id: str) -> Tuple[str, str]:
+    # Process backwards compat for pre-0.4 specifiers
+    model_id = {
+      'gpt-4o': 'openai/gpt-4o',
+      'gpt-4o-mini': 'openai/gpt-4o-mini',
+      'gpt-3.5-turbo-instruct': 'openai/gpt-3.5-turbo-instruct',
+      'gpt-4-turbo': 'openai/gpt-4-turbo',
+      'claude-3-5-sonnet': 'anthropic/claude-3-5-sonnet-20240620',
+      'claude-3-opus': 'anthropic/claude-3-opus-20240229',
+      'claude-3-sonnet': 'anthropic/claude-3-sonnet-20240229',
+      'claude-3-haiku': 'anthropic/claude-3-haiku-20240307',
+      'groq-llama3-8b': 'groq/llama3-8b-8192',
+      'groq-llama3-70b': 'groq/llama3-70b-8192',
+      'groq-mixtral-8x7b': 'groq/mixtral-8x7b-32768',
+      'groq-gemma-7b': 'groq/gemma-7b-it',
+      'cerebras-llama3-8b': 'cerebras/llama3.1-8b',
+      'cerebras-llama3-70b': 'cerebras/llama3.1-70b',
+    }.get(model_id, model_id)
 
-    max_just_name = max([len(module) for (module, _, _, _, _) in self.model_list])
+    if '/' in model_id:
+      return model_id.split('/', 1)
+    else:
+      return (model_id, '')
+
+  def list_providers(self):
+    print(f'Providers can be configured via {self.args.config}\n')
+
+    max_just_name = max([len(module) for (module, _, _) in self.provider_list])
     max_just_avail = len('NOT AVAILABLE')
 
-    for (model, avail, help, _, model_id) in self.model_list:
+    print('Available model providers:')
+    for (model, avail, help) in self.provider_list:
       print(
         model.ljust(max_just_name + 2) +
         ('OK' if avail else 'NOT AVAILABLE').rjust(max_just_avail) +
         " | "
-        f"{help} ({model_id})"
+        f"{help}"
       )
 
 
-  def load_models(self) -> List[Tuple[str, bool, str, str]]:
+  def load_model_providers(self) -> List[Tuple[str, bool, str]]:
     openai_available = len(self.config.effective_openai_key) > 0
     openai_str = "Ready" if openai_available else f"Requires OpenAI API key"
 
-    claude_available = len(self.config.effective_claude_key) > 0
-    claude_str = "Ready" if claude_available else f"Requires Claude API key"
+    anthropic_available = len(self.config.effective_anthropic_key) > 0
+    claude_str = "Ready" if anthropic_available else f"Requires Claude API key"
 
     groq_available = len(self.config.effective_groq_key) > 0
     groq_str = "Ready" if groq_available else f"Requires Groq API key"
@@ -124,81 +150,85 @@ class Cli(object):
     cerebras_available = len(self.config.effective_cerebras_key) > 0
     cerebras_str = "Ready" if cerebras_available else f"Requires Cerebras API key"
 
+    openrouter_available = len(self.config.effective_openrouter_key) > 0
+    openrouter_str = "Ready" if openrouter_available else f"Requires OpenRouter API key"
+
     local_available = len(self.config.local_uri) > 0
     local_str = f"Ready - {self.config.local_uri}" if local_available else f"Requires local LLM API URI"
 
     return [
-      ('local', local_available, local_str, 'LOCAL', 'local'),
-      ('gpt-4o', openai_available, openai_str, 'OPENAI', 'gpt-4o'),
-      ('gpt-3.5-turbo-instruct', openai_available, openai_str, 'OPENAI', 'gpt-3.5-turbo-instruct'),
-      ('gpt-4-turbo', openai_available, openai_str, 'OPENAI', 'gpt-4-turbo'),
-
-      ('claude-3-5-sonnet', claude_available, claude_str, 'CLAUDE', 'claude-3-5-sonnet-20240620'),
-      ('claude-3-opus', claude_available, claude_str, 'CLAUDE', 'claude-3-opus-20240229'),
-      ('claude-3-sonnet', claude_available, claude_str, 'CLAUDE', 'claude-3-sonnet-20240229'),
-      ('claude-3-haiku', claude_available, claude_str, 'CLAUDE', 'claude-3-haiku-20240307'),
-
-      ('groq-llama3-8b', groq_available, groq_str, 'GROQ', 'llama3-8b-8192'),
-      ('groq-llama3-70b', groq_available, groq_str, 'GROQ', 'llama3-70b-8192'),
-      ('groq-mixtral-8x7b', groq_available, groq_str, 'GROQ', 'mixtral-8x7b-32768'),
-      ('groq-gemma-7b', groq_available, groq_str, 'GROQ', 'gemma-7b-it'),
-
-      ('cerebras-llama3-8b', cerebras_available, cerebras_str, 'CEREBRAS', 'llama3.1-8b'),
-      ('cerebras-llama3-70b', cerebras_available, cerebras_str, 'CEREBRAS', 'llama3.1-70b'),
+      ('local', local_available, local_str),
+      ('openai', openai_available, openai_str),
+      ('anthropic', anthropic_available, claude_str),
+      ('groq', groq_available, groq_str),
+      ('cerebras', cerebras_available, cerebras_str),
+      ('openrouter', openrouter_available, openrouter_str),
     ]
 
 
   def dispatch_request(self, request: str) -> List[str]:
-    (_, _, _, model_type, model_id) = self.models[self.selected_model]
     temperature = self.args.temperature or self.config.temperature
 
     # TOTO: Implement dispatcher selection based on the chosen model
-    if model_type == 'OPENAI':
+    if self.selected_provider == 'openai':
       dispatcher = DefaultDispatcher(
         uri = '',  # Defaults to None, which uses the OpenAI API
         key = self.config.effective_openai_key,
-        model = model_id,
+        model = self.selected_model,
         config = self.config,
         temperature=temperature,
         verbose=self.args.verbose,
       )
-    elif model_type == 'CLAUDE':
+    elif self.selected_provider == 'anthropic':
       dispatcher = AnthropicDispatcher(
-        key = self.config.effective_claude_key,
-        model = model_id,
+        key = self.config.effective_anthropic_key,
+        model = self.selected_model,
         config = self.config,
         temperature=temperature,
         verbose=self.args.verbose,
       )
-    elif model_type == 'GROQ':
+    elif self.selected_provider == 'groq':
       dispatcher = DefaultDispatcher(
         uri = 'https://api.groq.com/openai/v1',
         key = self.config.effective_groq_key,
-        model = model_id,
+        model = self.selected_model,
         config = self.config,
         temperature=temperature,
         verbose=self.args.verbose,
       )
-    elif model_type == 'CEREBRAS':
+    elif self.selected_provider == 'cerebras':
       dispatcher = DefaultDispatcher(
         uri = 'https://api.cerebras.ai/v1',
         key = self.config.effective_cerebras_key,
-        model = model_id,
+        model = self.selected_model,
         config = self.config,
         temperature=temperature,
         verbose=self.args.verbose,
       )
-    elif model_type == 'LOCAL':
+    elif self.selected_provider == 'openrouter':
+      dispatcher = DefaultDispatcher(
+        uri = 'https://openrouter.ai/api/v1',
+        key = self.config.effective_openrouter_key,
+        model = self.selected_model,
+        config = self.config,
+        temperature=temperature,
+        verbose=self.args.verbose,
+        additional_headers={
+          "HTTP-Referer": "https://github.com/randombk/llm2sh",
+          "X-Title": "llm2sh",
+        },
+      )
+    elif self.selected_provider == 'local':
       dispatcher = DefaultDispatcher(
         uri = self.config.local_uri,
         key = self.config.local_api_key,
-        model = self.config.local_model_name,
+        model = self.selected_model,
         config = self.config,
         temperature=temperature,
         verbose=self.args.verbose,
       )
     else:
-      ethrow(f"Unknown model type {model_type}")
+      ethrow(f"Unknown model provider {self.selected_provider}")
 
     return dispatcher.dispatch(request)
 

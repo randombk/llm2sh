@@ -1,6 +1,17 @@
 #!/usr/bin/env python3
 
 export = [
+  Version(0, 4, 0, changelog="""
+    Major Changes:
+      - Refactor how models and model providers are specified, to avoid hard-coding
+        available models.
+  """),
+  Version(0, 3, 8, changelog="""
+    Minor Changes:
+      - Update paths and default models to catch up with new releases
+      - Add OpenRouter support
+      - Default new installations to gpt-4o
+  """),
   Version(0, 3, 7, changelog="""
     Minor Changes:
       - Add support for Cerebras API

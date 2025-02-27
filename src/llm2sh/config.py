@@ -1,20 +1,19 @@
 import json
 import os
-from io import StringIO
 from dataclasses import dataclass, asdict
 
 @dataclass
 class Config:
-  default_model: str = 'groq-llama3-70b'
+  default_model: str = 'openai/gpt-4o'
 
   openai_api_key: str = ''
-  claude_api_key: str = ''
+  anthropic_api_key: str = ''
   groq_api_key: str = ''
   cerebras_api_key: str = ''
+  openrouter_api_key: str = ''
 
   local_uri: str = 'http://localhost:5000/v1'
   local_api_key: str = ''
-  local_model_name: str = ''
 
   temperature: float = 0.2
 
@@ -31,14 +30,19 @@ class Config:
   @classmethod
   def from_dict(cls, d: dict) -> "Config":
     return cls(
-      default_model = d.get('default_model', 'groq-llama3-70b'),
+      default_model = d.get('default_model', 'openai/gpt-4o'),
+
       openai_api_key = d.get('openai_api_key', ''),
-      claude_api_key = d.get('claude_api_key', ''),
+      anthropic_api_key = d.get('anthropic_api_key', d.get('claude_api_key', '')),  # Backwards compat with <v0.4
       groq_api_key = d.get('groq_api_key', ''),
       cerebras_api_key = d.get('cerebras_api_key', ''),
+      openrouter_api_key = d.get('openrouter_api_key', ''),
+
       local_uri = d.get('local_uri', 'http://localhost:5000/v1'),
       local_api_key = d.get('local_api_key', ''),
+
       temperature = d.get('temperature', 0.2),
+
       i_like_to_live_dangerously = d.get('i_like_to_live_dangerously', False),
     )
 
@@ -54,9 +58,9 @@ class Config:
 
 
   @property
-  def effective_claude_key(self) -> str:
-    if len(self.claude_api_key) > 0:
-      return self.claude_api_key
+  def effective_anthropic_key(self) -> str:
+    if len(self.anthropic_api_key) > 0:
+      return self.anthropic_api_key
     elif len(os.environ.get('ANTHROPIC_API_KEY', '')) > 0:
       return os.environ['ANTHROPIC_API_KEY']
     else:
@@ -79,6 +83,16 @@ class Config:
       return self.cerebras_api_key
     elif len(os.environ.get('CEREBRAS_API_KEY', '')) > 0:
       return os.environ['CEREBRAS_API_KEY']
+    else:
+      return ''
+
+
+  @property
+  def effective_openrouter_key(self) -> str:
+    if len(self.openrouter_api_key) > 0:
+      return self.openrouter_api_key
+    elif len(os.environ.get('OPENROUTER_API_KEY', '')) > 0:
+      return os.environ['OPENROUTER_API_KEY']
     else:
       return ''
 

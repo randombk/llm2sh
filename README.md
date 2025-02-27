@@ -27,6 +27,7 @@ For OpenAI, Claude, and Groq, you will need to have an API key to use this tool.
 - Claude: You can sign up for an API key on the [Claude API Console](https://console.anthropic.com/dashboard).
 - Groq: You can sign up for an API key on the [GroqCloud Console](https://console.groq.com/).
 - Cerebras: You can sign up for an API key on the [Cerebras Developer Platform](https://cloud.cerebras.ai/).
+- OpenRouter: You can sign up for an API key on [OpenRouter](https://openrouter.ai/).
 
 ### Configuration
 
@@ -34,8 +35,8 @@ Running `llm2sh` for the first time will create a template configuration file at
 You can specify a different path using the `-c` or `--config` option.
 
 Before using `llm2sh`, you need to set up the configuration file with your API keys and preferences.
-You can also use the `OPENAI_API_KEY`, `CLAUDE_API_KEY`, and `GROQ_API_KEY` environment variables to specify the
-API keys.
+You can also use the `OPENAI_API_KEY`, `CLAUDE_API_KEY`, `GROQ_API_KEY`, and `OPENROUTER_API_KEY` environment
+variables to specify the API keys.
 
 ### Basic Usage
 
@@ -93,7 +94,7 @@ llm2sh --force "delete all temporary files"
   -c CONFIG, --config CONFIG
                         specify config file, (Default: ~/.config/llm2sh/llm2sh.json)
   -d, --dry-run         do not run the generated command
-  -l, --list-models     list available models
+  -l, --list-providers  list available model providers
   -m MODEL, --model MODEL
                         specify which model to use
   -t TEMPERATURE, --temperature TEMPERATURE
@@ -104,25 +105,46 @@ llm2sh --force "delete all temporary files"
 
 ## Supported Models
 
-`llm2sh` currently supports the following LLMs for command generation:
+`llm2sh` supports any LLM endpoint that accepts the OpenAI or Claude APIs. There is a balancing act
+between response time, cost, and accuracy that you must find. Some personal commentary:
 
-(Ratings are based on my subjective opinion and experience. Your mileage may vary.)
+* Groq and Cerebras are good for simple everyday tasks with near-instant response times and a
+  free API, but struggle with more complex tasks.
+* Anthropic and OpenAI non-reasoning models can handle a surprising number of complex tasks,
+  but can be pricy and will take a few seconds before replying.
+* Reasoning models provide amazing results, but take a long time to return a result. The
+  current `llm2sh` UX does not do a great job of handling long thinking periods.
 
-| Model Name | Provider | Accuracy | Cost | Notes |
-|----------|----------|----------|----------|----------|
-| `local` | N/A | ¯\\_(ツ)_/¯ | **FREE** | Needs local OpenAI API compatible LLM Api Endpoint (i.e. llama.cpp) |
-| `groq-llama3-70b` | Groq | 🧠🧠🧠 | **FREE** _(with rate limits)_ | Blazing fast; recommended |
-| `groq-llama3-8b` | Groq | 🧠🧠 | **FREE** _(with rate limits)_ | Blazing fast |
-| `groq-mixtral-8x7b` | Groq | 🧠 | **FREE** _(with rate limits)_ | Blazing fast |
-| `groq-gemma-7b` | Groq | 🧠 | **FREE** _(with rate limits)_ | Blazing fast |
-| `cerebras-llama3-70b` | Cerebras | 🧠🧠🧠 | **FREE** _(with rate limits)_ | Blazing fast; recommended |
-| `cerebras-llama3-8b` | Cerebras | 🧠🧠 | **FREE** _(with rate limits)_ | Blazing fast |
-| `gpt-4o` | OpenAI | 🧠🧠 | 💲💲💲 | Default model |
-| `gpt-4-turbo` | OpenAI | 🧠🧠🧠 | 💲💲💲💲 | |
-| `gpt-3.5-turbo-instruct` | OpenAI | 🧠🧠 | 💲💲 | |
-| `claude-3-opus` | Claude | 🧠🧠🧠🧠 | 💲💲💲💲 | Fairly slow (>10s) |
-| `claude-3-sonnet` | Claude | 🧠🧠🧠 | 💲💲💲 | Somewhat slow (~5s) |
-| `claude-3-haiku` | Claude | 🧠 | 💲💲 | |
+Notably:
+
+* For models on OpenAI, Anthropic, Groq, and Cerebras, specify the model ID as
+  `'<provider>/<model>'`. For example:
+  * OpenAI `gpt-4o` => `'openai/gpt-4o'`
+  * Anthropic `claude-3-7-sonnet-latest` => `'anthropic/claude-3-7-sonnet-latest'`
+  * Groq `llama-3.1-8b-instant` => `'groq/llama-3.1-8b-instant'`
+  * Cerebras `llama3.1-8b` => `'cerebras/llama3.1-8b'`
+* Local models: set `default_model` to `'local'` and update the configuration to point
+  at a local OpenAI API compatible LLM Api Endpoint (i.e. llama.cpp).
+* OpenRouter can be used by setting model to `'openrouter/<model>'`. This can result in
+  model IDs like `'openrouter/openai/gpt-4o'`, and that's alright.
+
+**For backwards compatibility with <v0.4**, the following model names are given special treatment and
+map to specific models:
+
+ * `gpt-4o` => `openai/gpt-4o`
+ * `gpt-4o-mini` => `openai/gpt-4o-mini`
+ * `gpt-3.5-turbo-instruct` => `openai/gpt-3.5-turbo-instruct`
+ * `gpt-4-turbo` => `openai/gpt-4-turbo`
+ * `claude-3-5-sonnet` => `anthropic/claude-3-5-sonnet-20240620`
+ * `claude-3-opus` => `anthropic/claude-3-opus-20240229`
+ * `claude-3-sonnet` => `anthropic/claude-3-sonnet-20240229`
+ * `claude-3-haiku` => `anthropic/claude-3-haiku-20240307`
+ * `groq-llama3-8b` => `groq/llama3-8b-8192`
+ * `groq-llama3-70b` => `groq/llama3-70b-8192`
+ * `groq-mixtral-8x7b` => `groq/mixtral-8x7b-32768`
+ * `groq-gemma-7b` => `groq/gemma-7b-it`
+ * `cerebras-llama3-8b` => `cerebras/llama3.1-8b`
+ * `cerebras-llama3-70b` => `cerebras/llama3.1-70b`
 
 ## Roadmap
 
@@ -146,6 +168,12 @@ prompt in addition to the user's request:
 - Your username
 - Names of files and directories in your current working directory
 - Names of environment variables available in your shell. (Only the names/keys are sent, not the values).
+
+## Breaking Changes from pre-0.4
+
+* The `local_model_name` configuration option is now removed. Specify names for local models via the model name.
+  * Before: `model = 'local'` and `local_model_name = 'llama3.1-8b-q4'`
+  * After: `model = 'local/llama3.1-8b-q4'`
 
 ## Contributing
 
