@@ -2,6 +2,13 @@
   {
     "major": 0,
     "minor": 4,
+    "patch": 1,
+    "update": 0,
+    "changelog": "\n    Minor Changes:\n      - Add Gemini API support\n  "
+  },
+  {
+    "major": 0,
+    "minor": 4,
     "patch": 0,
     "update": 0,
     "changelog": "\n    Major Changes:\n      - Refactor how models and model providers are specified, to avoid hard-coding\n        available models.\n  "

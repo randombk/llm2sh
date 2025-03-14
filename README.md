@@ -28,6 +28,7 @@ For OpenAI, Claude, and Groq, you will need to have an API key to use this tool.
 - Groq: You can sign up for an API key on the [GroqCloud Console](https://console.groq.com/).
 - Cerebras: You can sign up for an API key on the [Cerebras Developer Platform](https://cloud.cerebras.ai/).
 - OpenRouter: You can sign up for an API key on [OpenRouter](https://openrouter.ai/).
+- Google Gemini: You can sign up for an API key on [AI Studio](https://aistudio.google.com/apikey/).
 
 ### Configuration
 
@@ -117,7 +118,7 @@ between response time, cost, and accuracy that you must find. Some personal comm
 
 Notably:
 
-* For models on OpenAI, Anthropic, Groq, and Cerebras, specify the model ID as
+* For models on OpenAI, Anthropic, Groq, Cerebras, and Gemini, specify the model ID as
   `'<provider>/<model>'`. For example:
   * OpenAI `gpt-4o` => `'openai/gpt-4o'`
   * Anthropic `claude-3-7-sonnet-latest` => `'anthropic/claude-3-7-sonnet-latest'`

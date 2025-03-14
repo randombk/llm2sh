@@ -153,6 +153,9 @@ class Cli(object):
     openrouter_available = len(self.config.effective_openrouter_key) > 0
     openrouter_str = "Ready" if openrouter_available else f"Requires OpenRouter API key"
 
+    gemini_available = len(self.config.effective_gemini_key) > 0
+    gemini_str = "Ready" if gemini_available else f"Requires Gemini API key"
+
     local_available = len(self.config.local_uri) > 0
     local_str = f"Ready - {self.config.local_uri}" if local_available else f"Requires local LLM API URI"
 
@@ -163,6 +166,7 @@ class Cli(object):
       ('groq', groq_available, groq_str),
       ('cerebras', cerebras_available, cerebras_str),
       ('openrouter', openrouter_available, openrouter_str),
+      ('gemini', gemini_available, gemini_str),
     ]
 
 
@@ -217,6 +221,15 @@ class Cli(object):
           "HTTP-Referer": "https://github.com/randombk/llm2sh",
           "X-Title": "llm2sh",
         },
+      )
+    elif self.selected_provider == 'gemini':
+      dispatcher = DefaultDispatcher(
+        uri = 'https://generativelanguage.googleapis.com/v1beta/openai',
+        key = self.config.effective_gemini_key,
+        model = self.selected_model,
+        config = self.config,
+        temperature=temperature,
+        verbose=self.args.verbose,
       )
     elif self.selected_provider == 'local':
       dispatcher = DefaultDispatcher(

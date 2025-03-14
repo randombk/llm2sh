@@ -11,6 +11,7 @@ class Config:
   groq_api_key: str = ''
   cerebras_api_key: str = ''
   openrouter_api_key: str = ''
+  gemini_api_key: str = ''
 
   local_uri: str = 'http://localhost:5000/v1'
   local_api_key: str = ''
@@ -37,6 +38,7 @@ class Config:
       groq_api_key = d.get('groq_api_key', ''),
       cerebras_api_key = d.get('cerebras_api_key', ''),
       openrouter_api_key = d.get('openrouter_api_key', ''),
+      gemini_api_key = d.get('gemini_api_key', ''),
 
       local_uri = d.get('local_uri', 'http://localhost:5000/v1'),
       local_api_key = d.get('local_api_key', ''),
@@ -93,6 +95,16 @@ class Config:
       return self.openrouter_api_key
     elif len(os.environ.get('OPENROUTER_API_KEY', '')) > 0:
       return os.environ['OPENROUTER_API_KEY']
+    else:
+      return ''
+
+
+  @property
+  def effective_gemini_key(self) -> str:
+    if len(self.gemini_api_key) > 0:
+      return self.gemini_api_key
+    elif len(os.environ.get('GEMINI_API_KEY', '')) > 0:
+      return os.environ['GEMINI_API_KEY']
     else:
       return ''
 
