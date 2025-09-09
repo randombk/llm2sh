@@ -1,6 +1,10 @@
 #!/usr/bin/env python3
 
 export = [
+  Version(0, 4, 1, update=1, changelog="""
+    Minor Changes:
+      - Update dev environment to use uv for venv management
+  """),
   Version(0, 4, 1, changelog="""
     Minor Changes:
       - Add Gemini API support

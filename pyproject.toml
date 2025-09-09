@@ -19,7 +19,7 @@ dev = ["build", "twine"]
 llm2sh = "llm2sh.__main__:cli"
 
 [tool.setuptools.dynamic]
-version = { file = ".latest-version.generated.txt" }
+version = { file = ".latest-version-python.generated.txt" }
 
 [build-system]
 requires = ["setuptools", "wheel"]
