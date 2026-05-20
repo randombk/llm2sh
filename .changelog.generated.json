@@ -3,6 +3,13 @@
     "major": 0,
     "minor": 4,
     "patch": 1,
+    "update": 2,
+    "changelog": "\n    Minor Changes:\n      - Align ``.dlpmodule`` with dlp lifecycle v2: ``build_scopes`` and ``dlp codegen`` for package build\n  "
+  },
+  {
+    "major": 0,
+    "minor": 4,
+    "patch": 1,
     "update": 1,
     "changelog": "\n    Minor Changes:\n      - Update dev environment to use uv for venv management\n  "
   },
