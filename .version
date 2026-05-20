@@ -1,6 +1,10 @@
 #!/usr/bin/env python3
 
 export = [
+  Version(0, 4, 1, update=2, changelog="""
+    Minor Changes:
+      - Align ``.dlpmodule`` with dlp lifecycle v2: ``build_scopes`` and ``dlp codegen`` for package build
+  """),
   Version(0, 4, 1, update=1, changelog="""
     Minor Changes:
       - Update dev environment to use uv for venv management

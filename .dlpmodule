@@ -34,7 +34,12 @@ export = DLPModule(
     '''
   ],
 
-  build_script=[
-    'uv build',
-  ],
+  build_scopes={
+    'backend': [
+      'uv build',
+    ],
+  },
+  build_scope_aliases={
+    'backend': ['back', 'api'],
+  },
 )
